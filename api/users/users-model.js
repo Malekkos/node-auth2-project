@@ -1,6 +1,13 @@
 const db = require('../../data/db-config.js');
 
-function find() {
+async function find() {
+  const data = await db("users as u")
+  .leftJoin("roles as r", "r.role_id", "u.role_id")
+  .select("user_id", "username", "role_name")
+
+  return data
+
+
   /**
     You will need to join two tables.
     Resolves to an ARRAY with all users.
