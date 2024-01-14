@@ -3,11 +3,18 @@ const jwt = require("jsonwebtoken")
 
 const restricted = (req, res, next) => {
   const token = req.headers.authorization
-
-  if(!token) {
-    res.json("Sorry, no token!")
+  if(token) {
+    jwt.verify(token, JWT_SECRET, (error, decoded) => {
+      if(error) {
+        next({ status: 401, message: "Token invalid"})
+      } else {
+        req.decodedJWT = decoded //  HAPPY PATH
+        console.log(req.decodedJWT) // NOT BUILT
+        next() // AS OF YET
+      }
+    })
   } else {
-    res.json("Nice token!")
+    next({ status: 401, message: "Token required"})
   }
   /*
     If the user does not provide a token in the Authorization header:
