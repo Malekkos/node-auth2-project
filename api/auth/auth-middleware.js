@@ -1,7 +1,14 @@
 const { JWT_SECRET } = require("../secrets"); // use this secret!
+const jwt = require("jsonwebtoken")
 
 const restricted = (req, res, next) => {
-  next()
+  const token = req.headers.authorization
+
+  if(!token) {
+    res.json("Sorry, no token!")
+  } else {
+    res.json("Nice token!")
+  }
   /*
     If the user does not provide a token in the Authorization header:
     status 401
