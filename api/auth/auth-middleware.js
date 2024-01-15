@@ -10,9 +10,8 @@ const restricted = (req, res, next) => {
       if(error) {
         next({ status: 401, message: "Token invalid"})
       } else {
-        req.decodedJWT = decoded //  HAPPY PATH
-        console.log(req.decodedJWT) // NOT BUILT
-        next() // AS OF YET
+        req.decodedJWT = decoded
+        next()
       }
     })
   } else {
@@ -36,8 +35,7 @@ const restricted = (req, res, next) => {
 }
 
 const only = role_name => (req, res, next) => {
-  const token = req.decodedJWT
-  if(token.role_name !== role_name) {
+  if(req.decodedJWT.role_name !== role_name) {
     next({ status: 403, message: "This is not for you"})
   } else {
     next()
@@ -59,9 +57,8 @@ const only = role_name => (req, res, next) => {
 const checkUsernameExists = async (req, res, next) => {
   const { username } = req.body
 
-  const exists = await Users.findBy({"username": username})
-
-  if(!exists) {
+  const [ exists ] = await Users.findBy({"username": username})
+  if(exists === undefined) {
     next({ status: 401, message: "Invalid credentials"})
   } else {
     next()
@@ -80,10 +77,8 @@ const checkUsernameExists = async (req, res, next) => {
 const validateRoleName = (req, res, next) => {
   let { role_name } = req.body
   if(!role_name || role_name.length === 0) {
-    console.log('in here')
     req.role_name = "student"
   } else {
-    console.log("got in here")
     req.role_name = role_name.trim()
     req.role_name.trim()
   }
