@@ -14,7 +14,7 @@ router.post("/register", validateRoleName, async (req, res, next) => {
   password = hash
   await Users.add({"username": username, "password": password, "role_name": role_name})
   .then(user => {
-    res.status(201).json(user)
+    res.status(201).json(user[0])
   })
   .catch(error => {
     next(error)
